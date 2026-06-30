@@ -1,0 +1,99 @@
+{
+    "PRE_DOMAIN": {
+        "MIN_LAT": -50.0,
+        "MAX_LAT": 70.0,
+        "MIN_LON": 60.0,
+        "MAX_LON": 220.0
+    },
+    "IPATH": {
+        "TRACKS_RAW": "./input/tracks",
+        "CMIP6_RAW": "./input/cmip6/pretrain",
+        "ERA5_RAW": "./input/era5/finetune",
+        "IFS_RAW": "./input/ifs/pretrain",
+        "JMA_RAW": "./input/jma/pretrain",
+        "MERRA2_RAW": "./input/merra2/pretrain",
+        "NCEP_RAW": "./input/ncep/pretrain",
+        "GFS_RAW": "./input/gfs/detection/2025093012"
+    },
+    "OPATH": {
+        "CMIP6_PREP": "./output/CMIP6_extend",
+        "ERA5_PREP": "./output/ERA5_extend/",
+        "NCEP_PREP": "./output/NCEP_extend",
+        "MERRA2_PREP": "./output/MERRA2_extend",
+        "GFS_PREP": "./output/GFS_extend",
+        "TRACKS_PREP": "./output/tracks_preprocess",
+        "CMIP6_DYNAMIC": "./output/CMIP6_dynamic",
+        "ERA5_DYNAMIC": "./output/ERA5_dynamic",
+        "NCEP_DYNAMIC": "./output/NCEP_dynamic",
+        "MERRA2_DYNAMIC": "./output/MERRA2_dynamic",
+        "GFS_DYNAMIC": "./output/GFS_dynamic",
+        "CMIP6_PAST": "./output/CMIP6_past",
+        "ERA5_PAST": "./output/ERA5_past",
+        "NCEP_PAST": "./output/NCEP_past",
+        "MERRA2_PAST": "./output/MERRA2_past",
+        "GFS_PAST": "./output/GFS_past",
+        "CMIP6_POSITIVE": "./output/CMIP6_positive",
+        "ERA5_POSITIVE": "./output/ERA5_positive",
+        "NCEP_POSITIVE": "./output/NCEP_positive",
+        "MERRA2_POSITIVE": "./output/MERRA2_positive",
+        "GFS_POSITIVE": "./output/GFS_positive"
+    },
+    "STEP_BACK_COUNT": 20,
+    "DOMAIN_EXTRACTION_BATCH_SIZE": 64,
+    "SLICING_WINDOW": {
+        "AREA": {
+            "MIN_LAT": 0.0,
+            "MAX_LAT": 30.0,
+            "MIN_LON": 100.0,
+            "MAX_LON": 150.0
+        },
+        "CHILD_AREA": {
+            "LAT_DIM": 33.0,
+            "LON_DIM": 33.0,
+            "RESOLUTION": {
+                "LAT_STEP": 0.5,
+                "LON_STEP": 0.5
+            }
+        },       
+        "NUM_STEP": {
+            "LAT_NSTEP": 10,
+            "LON_NSTEP": 10
+        },
+        "AGGREGATION": {
+            "RUN_OPT": 0,
+            "AGG_STEPS": 1,
+            "TIME_STEP_HOURS": 6
+        },
+        "INPUT_PATH": "./output/GFS_extend",
+        "OUTPUT_PATH": "./output/GFS_slide"
+    },
+
+    "DYNAMIC_DOMAIN": {
+        "SLIDE_DIR": "../../output/GFS_slide/",
+        "MODEL_TEMP": "/N/slate/ckieu/tcg-net//models/finetune/ResNet_r30_w6/Step_{0}_v0/checkpoints/last.ckpt",
+        "PREDICTION_CSV": "../../output/GFS_slide/dynamic_prediction.csv"
+    },
+
+    "TCG_FREQUENCY": {
+        "PLOT_IBTRACS": true,
+        "IBTRACS_FOLDER": "./output/tracks_preprocess",
+        "PLOT_DURATION": false,
+        "YEAR_DURATION": "1940-1960",
+        "PREDICT_CSV_FILE": "./output/ERA5_slide_1942/dynamic_prediction.csv",
+        "OUTPUT_FREQUENCY": "./output/TCG_frequency_maps"
+    },    
+    "DYNAMIC_MODEL_DATASET": {
+        "SINGLE_VAR": ["PHIS", "SLP"],
+        "PRESS_VAR": ["H", "OMEGA", "QI", "QL", "QV", "RH", "T", "U", "V"],
+        "ADD_VAR": ["VOR", "DIV"],
+        "PRESS_LEVEL": [1000, 975, 950, 925, 900, 875, 850, 825,
+               800, 775, 750, 725, 700, 650, 600, 550,
+               500, 450, 400, 350, 300, 250, 200, 150, 100],
+        "LEVEL": 25,
+        "STATISTIC_PATH": "/N/slate/ckieu/tcg-net/models/resnet18/data_train_statistics.xlsx",
+        "TRAIN_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv",
+        "VAL_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv",
+        "TEST_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv",
+        "PREDICT_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv"
+    }
+}
