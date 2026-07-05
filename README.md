@@ -1,18 +1,24 @@
-------------- A. Steps to run the system for operational forecast 
+# Description
 
-1. Copy all input data under each location of ./input. Note that the operational mode support
+This repository extends the tropical cyclone genesis prediction framework in Nguyen and Kieu (2023) to basin-scale applications. Using a sliding-window approach, this system performs continuous scans over an entire ocean basin to generate spatial maps of tropical cyclone formation probability. The system can also be used to reconstruct climatological distributions of genesis over extended periods, making it suitable for climate analysis as well as operational forecasting.
+
+References: Le et al. (2025, https://doi.org/10.48550/arXiv.2510.06118); Kieu et al. (2026, https://arxiv.org/pdf/2512.17711)
+
+## A. For operational forecast 
+
+1. Copy all input data under each location of ./input. Note that the operational mode supports
    only 2 types of runs: one is forecast mode that requires only an initial condition, 
    and the other is the detection mode that requires the entire global forecast (much like
    downscaling). 
 
-2. Go to operation directory and run:
+2. Go to the operation directory and run:
    - forecast mode: sh job_main.sh 2025112500 forecast gfs
    - detection mode: sh job_main.sh 2025112506 detection gfs
 
 3. Check the output under ./output/postprocess/$cycle
 
 
-------------- B. Steps to run the system for climate reconstruction
+## B. For climate reconstruction
 
 1. Run pre-process to create extended domains for each type of dataset era5/merra2/ifs/gfs/...
    This step will be needed for all modes including forecast, finetune, pre-train, or reconstruction.
@@ -31,7 +37,7 @@
     - edit config.jon to make sure the script points to the right output from the prediction step
     - run plot_prediction.py/...
 
------------- C. Steps to run the system for pre-training and/or finetuning
+## C. For pre-training and/or fine-tuning
 
 1. Run pre-process to create extended domains for each type of dataset era5/merra2/ifs/gfs/...
    This step will be needed for all modes including forecast, finetune, pre-train, or reconstruction.
