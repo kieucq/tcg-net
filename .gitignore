@@ -16,4 +16,4 @@ models/prediction/libtcg_DynamicModel/__pycache__
 models/prediction/utilities/__pycache__
 postprocess/__pycache__
 preprocess/domain_extract
-
+userguide.txt
