@@ -73,7 +73,7 @@ tcg-net/
 │   ├── gfs/                         # GFS preprocessing and valid-time renaming
 │   ├── cmip6/                       # WRF-style CMIP6 preprocessing
 │   ├── domain_extract/              # PD/DD sample extraction and dataset adapters
-│   ├── scripts/                     # Older extraction job wrappers
+│   ├── scripts/                     # Older legacy extraction job wrappers (no use)
 │   └── backup/                      # Historical preprocessing/analysis implementation
 ├── models/
 │   ├── lib/
@@ -240,7 +240,7 @@ Raw data are intentionally excluded from Git. The expected high-level layout is:
 
 ```text
 input/
-├── tracks/                         # IBTrACS CSV files
+├── tracks/  # IBTrACS CSV files
 ├── merra2/{pretrain,finetune,forecast}/
 ├── era5/{pretrain,finetune,forecast}/
 ├── ncep/{pretrain,finetune,forecast}/
@@ -252,11 +252,11 @@ input/
     └── detection/YYYYMMDDHH/
 ```
 
-Set the relevant `IPATH` and `OPATH` entries in `config.json` before processing. Preprocessed files are standardized to the coordinate and variable names expected downstream and are normally written to `output/<DATASET>_extend/`.
+Set the relevant `IPATH` and `OPATH` entries in `config.json` before processing. Preprocessed files are standardized to the coordinate and variable names expected downstream and are normally written to `output/<DATASET>_extend/`, where DATASET denotes ERA5, GFS, MERRA-2,... or any data type you want to use. Note that for each dataset, there 3 sub-dirs `pretrain, finetune, forecast`, which are used for different purposes. 
 
 ### 6.2. Preprocess atmospheric data
 
-Run the required dataset preprocessor from the repository root:
+Set domain size under "PRE_DOMAIN" in config.json and run the required dataset preprocessor from the repository root as below:
 
 ```bash
 python preprocess/merra2/merra2_preprocess.py
@@ -266,9 +266,9 @@ python preprocess/cmip6/cmip6_preprocess.py
 python preprocess/gfs/gfs_preprocess.py
 ```
 
-Only run the command for the dataset configured in `config.json`. The preprocessors recursively find their supported input extensions, clear the configured output directory, process files in parallel, and write timestamped NetCDF files.
+Only run the command for the data configured in `config.json`. The preprocessors recursively find their supported input extensions, clear the configured output directory, process files in parallel, and write timestamped NetCDF files.
 
-On Slurm, MERRA-2 and ERA5 wrappers can be submitted after adapting their site settings:
+On Slurm, MERRA-2 and ERA5 wrappers should be submitted after adapting their site settings in case the preprocess run takes a long time:
 
 ```bash
 sbatch preprocess/merra2/job_sbatch.sh merra2
@@ -286,7 +286,7 @@ python preprocess/domain_extract/Extract_DynamicDomain.py --dataset merra2
 python preprocess/domain_extract/Extract_PastDomain.py --dataset merra2
 ```
 
-Valid extraction choices are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. Replace `merra2` as needed. The commands generate:
+Valid extraction choices are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. Replace `merra2` by your DATASET as needed. The commands generate:
 
 - `output/<DATASET>_positive/` for genesis-centered positive windows;
 - `output/<DATASET>_dynamic/` for eight-direction Dynamic Domain negatives;
