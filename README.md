@@ -259,19 +259,14 @@ Set the relevant `IPATH` and `OPATH` entries in `config.json` before processing.
 Set domain size under "PRE_DOMAIN" in config.json and run the required dataset preprocessor from the repository root as below:
 
 ```bash
-python preprocess/merra2/merra2_preprocess.py
-python preprocess/era5/era5_preprocess.py
-python preprocess/ncep/ncep_preprocess.py
-python preprocess/cmip6/cmip6_preprocess.py
-python preprocess/gfs/gfs_preprocess.py
+python preprocess/{dataset}/{dataset}_preprocess.py
 ```
 
-Only run the command for the data configured in `config.json`. The preprocessors recursively find their supported input extensions, clear the configured output directory, process files in parallel, and write timestamped NetCDF files.
+where `dataset` is the one configured in `config.json`, which currently can only be one of the following list `{era5, gfs, merra2, cmip6, ncep}`. The preprocessors recursively find their supported input extensions, clear the configured output directory, process files in parallel, and write timestamped NetCDF files.
 
-On Slurm, MERRA-2 and ERA5 wrappers should be submitted after adapting their site settings in case the preprocess run takes a long time:
+On Slurm, MERRA-2 and ERA5 wrappers should be submitted after adapting their site settings in case the preprocess run takes a long time. For example, if `dataset=era5`, then submit:
 
 ```bash
-sbatch preprocess/merra2/job_sbatch.sh merra2
 sbatch preprocess/era5/job_sbatch.sh era5
 ```
 
