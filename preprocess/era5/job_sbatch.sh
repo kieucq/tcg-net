@@ -1,11 +1,11 @@
 #!/bin/bash -l
 #SBATCH -A r00043
 #SBATCH -J preprocess
-#SBATCH -t 48:00:00
+#SBATCH -t 8:00:00
 #SBATCH -N 1
 #SBATCH -p gpu
 #SBATCH --gpus 2
-#SBATCH --mem-per-gpu=240G
+#SBATCH --mem-per-gpu=256G
 ##SBATCH --cpus-per-gpu=64
 set -x
 src="/N/slate/ckieu/tcg-net/"

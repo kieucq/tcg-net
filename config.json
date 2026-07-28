@@ -1,17 +1,17 @@
 {
     "PRE_DOMAIN": {
-        "MIN_LAT": -50.0,
-        "MAX_LAT": 70.0,
-        "MIN_LON": 60.0,
-        "MAX_LON": 220.0
+        "MIN_LAT": -20.0,
+        "MAX_LAT": 50.0,
+        "MIN_LON": 260.0,
+        "MAX_LON": 350.0
     },
     "IPATH": {
         "TRACKS_RAW": "./input/tracks",
-        "CMIP6_RAW": "./input/cmip6/pretrain",
-        "ERA5_RAW": "./input/era5/finetune",
+        "CMIP6_RAW": "./input/cmip6/finetune",
+        "ERA5_RAW": "./input/era5/pretrain",
         "IFS_RAW": "./input/ifs/pretrain",
         "JMA_RAW": "./input/jma/pretrain",
-        "MERRA2_RAW": "./input/merra2/pretrain",
+        "MERRA2_RAW": "./input/merra2/finetune",
         "NCEP_RAW": "./input/ncep/pretrain",
         "GFS_RAW": "./input/gfs/detection/2025112506"
     },
