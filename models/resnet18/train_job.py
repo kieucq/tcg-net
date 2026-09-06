@@ -76,6 +76,7 @@ def main(args):
             train_path = os.path.join(inp_dir, 'train.csv'),
             val_path = os.path.join(inp_dir, 'val.csv'),
             test_path = os.path.join(inp_dir, 'test.csv'),
+            predict_path = CONFIG.DYNAMIC_MODEL_DATASET.PREDICT_PATH,
             ratio = ratio,
             batch_size = batch_size,
             num_workers = num_workers,)

@@ -92,9 +92,9 @@
                500, 450, 400, 350, 300, 250, 200, 150, 100],
         "LEVEL": 25,
         "STATISTIC_PATH": "/N/slate/ckieu/tcg-net/models/resnet18/data_train_statistics.xlsx",
-        "TRAIN_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv",
-        "VAL_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv",
-        "TEST_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv",
-        "PREDICT_PATH": "./models/pre-trained/DynamicRemain_rus30/Step_2/train.csv"
+        "TRAIN_PATH": "/N/u/ckieu/BigRed200/codex/tcg-net/output/csv/DynamicRemain_rus30/Step_2/train.csv",
+        "VAL_PATH": "/N/u/ckieu/BigRed200/codex/tcg-net/output/csv/DynamicRemain_rus30/Step_2/train.csv",
+        "TEST_PATH": "/N/u/ckieu/BigRed200/codex/tcg-net/output/csv/DynamicRemain_rus30/Step_2/train.csv",
+        "PREDICT_PATH": "/N/u/ckieu/BigRed200/codex/tcg-net/output/csv/DynamicRemain_rus30/Step_2/train.csv"
     }
 }

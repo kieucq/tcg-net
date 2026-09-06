@@ -5,11 +5,11 @@
 #SBATCH -N 1
 #SBATCH -p gpu
 ##SBATCH -p gpu-debug 
-#SBATCH --gpus 2
+#SBATCH --gpus 1
 #SBATCH --mem-per-gpu=240G
 set -x
 src="/N/slate/ckieu/tcg-net/"
-output_dir="/N/scratch/ckieu/tcg-net/output"
+output_dir="/N/slate/ckieu/tcg-net/output"
 cd "${src}/models/resnet18/"
 step=$1
 if [ "${step}" = "" ]; then
@@ -18,17 +18,17 @@ if [ "${step}" = "" ]; then
 fi
 echo "Training model for forecast lead time (step) = ${step}"
 conda deactivate
-module load python/gpu/3.10.10
+module load python/gpu/3.12.5
 
 # set up parameters
 ratio=30
-weight=6
+weight=15
 project="ResNet"
-data_source="MERRA2"
-train_start_year=1955
-train_end_year=2023
-test_start_year=1940
-test_end_year=1954
+data_source="ERA5"
+train_start_year=1970
+train_end_year=1971
+test_start_year=1971
+test_end_year=1971
 seed=45
 batch_size=512
 

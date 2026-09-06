@@ -281,6 +281,12 @@ python preprocess/domain_extract/Extract_DynamicDomain.py --dataset merra2
 python preprocess/domain_extract/Extract_PastDomain.py --dataset merra2
 ```
 
+or you can run both step by
+
+```bash
+sbatch preprocess/domain_extract/job_sbatch merra2
+```
+
 Valid extraction choices are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. Replace `merra2` by your DATASET as needed. The commands generate:
 
 - `output/<DATASET>_positive/` for genesis-centered positive windows;
@@ -288,19 +294,21 @@ Valid extraction choices are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. Replac
 - `output/<DATASET>_past/` for same-location earlier-time negatives;
 - `output/tracks_preprocess/FIRST_<DATASET>_*.csv` for processed genesis records.
 
-Both extraction commands recreate the dataset-specific positive directory; therefore, the second run replaces the positive files written by the first. These files represent the same time-zero positive cases when the configuration and input coverage are unchanged.
-
-`preprocess/domain_extract/` and `preprocess/backup/` are present in the full working tree used to prepare this README but are currently matched by `.gitignore`. A fresh GitHub clone may not contain them. If they are absent, obtain the complete pipeline from the associated archive listed in [References](#references) or contact the maintainers.
+Both extraction commands recreate the dataset-specific positive directory; therefore, the second run replaces the positive files written by the first (this sloppy design needs to be fixed). These files represent the same time-zero positive cases when the configuration and input coverage are unchanged.
 
 ### 6.4. Build CSV splits
 
-The CSV generator expects generic `output/POSITIVE`, `output/PastDomain`, and `output/DynamicDomain` paths. Point these names to the dataset being trained. For MERRA-2, for example:
+Once you finish the preprocess step. The next one is to run the training. This starts with a process called "CSV generator". Basically, the CSV generator expects generic `output/POSITIVE`, `output/PastDomain`, and `output/DynamicDomain` paths from the preprocess steps. Point these names to the dataset to be trained. For MERRA-2, for example:
 
 ```bash
 ln -sfn "$PWD/output/MERRA2_positive" output/POSITIVE
 ln -sfn "$PWD/output/MERRA2_past" output/PastDomain
 ln -sfn "$PWD/output/MERRA2_dynamic" output/DynamicDomain
+```
 
+then go to main training model directory `resnet18` and run the following:
+
+```bash
 python models/resnet18/generate_csv_all.py \
   --inp_dir "$PWD/output" \
   --out_dir "$PWD/output/csv"
@@ -315,7 +323,7 @@ python models/resnet18/split_data_training.py \
   --rus_ratio 30
 ```
 
-The generator writes `output/csv/all.csv`. The splitter creates `train.csv`, `val.csv`, `test.csv`, and an undersampled `test2.csv` under `output/csv/DynamicRemain_rus<RATIO>/Step_<N>/` for step indices 2–18. `split_data_training_enrichment.py` is the alternative enrichment splitter that includes time-zero through the selected step as positive cases.
+The generator writes `output/csv/all.csv`. The splitter creates `train.csv`, `val.csv`, `test.csv`, and an undersampled `test2.csv` under `output/csv/DynamicRemain_rus<RATIO>/Step_<N>/` for step indices 2–18. `split_data_training_enrichment.py` is the alternative enrichment splitter that includes time-zero through the selected step as positive cases. Note that this step has to be done for each lead time (step) 2,4,6,..., because each lead time will have a separate model.
 
 The paper’s main protocol uses 1980–2016 for training/validation and 2017–2023 for testing. Some supplied job wrappers were later customized to different year ranges; inspect and set the ranges appropriate for the experiment being reproduced.
 
@@ -339,7 +347,7 @@ cd ../..
 
 The output directory receives a version suffix such as `_v0`. Repeat with steps `2 4 6 8 10 12 14 16 18` to build the complete checkpoint set used by inference.
 
-After adapting the hard-coded site paths and Slurm directives, the combined CSV/split/train wrapper can instead be submitted with:
+Note that whole procedure of generating CSV (section 6.3) and training (section 6.5) can be submitted all at once by using the script `model/resnet18/job_sbatch.sh`. For this, one has to change a few data paths and slurm directives in the code, and the combined CSV/split/train wrapper can be submitted with:
 
 ```bash
 sbatch models/resnet18/job_sbatch.sh 2
