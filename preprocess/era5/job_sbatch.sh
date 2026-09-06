@@ -4,7 +4,7 @@
 #SBATCH -t 8:00:00
 #SBATCH -N 1
 #SBATCH -p gpu
-#SBATCH --gpus 2
+#SBATCH --gpus 1
 #SBATCH --mem-per-gpu=256G
 ##SBATCH --cpus-per-gpu=64
 set -x

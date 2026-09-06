@@ -262,7 +262,7 @@ Set domain size under "PRE_DOMAIN" in config.json and run the required dataset p
 python preprocess/{dataset}/{dataset}_preprocess.py
 ```
 
-where `dataset` is the one configured in `config.json`, which currently can only be one of the following list `{era5, gfs, merra2, cmip6, ncep}`. The preprocessors recursively find their supported input extensions, clear the configured output directory, process files in parallel, and write timestamped NetCDF files.
+where `dataset` is the one configured in `config.json`, which currently can only be one of the following list `{era5, gfs, merra2, cmip6, ncep}`. The preprocessors recursively find their supported input extensions, clear the configured output directory, process files in parallel, and write timestamped NetCDF files. Note that the mode `pretrain` or `finetune` will be dictated by the data path under `IPATH` section of the config.json.
 
 On Slurm, MERRA-2 and ERA5 wrappers should be submitted after adapting their site settings in case the preprocess run takes a long time. For example, if `dataset=era5`, then submit:
 
