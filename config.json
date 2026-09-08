@@ -1,9 +1,9 @@
 {
     "PRE_DOMAIN": {
-        "MIN_LAT": -20.0,
-        "MAX_LAT": 50.0,
-        "MIN_LON": 260.0,
-        "MAX_LON": 350.0
+        "MIN_LAT": -50.0,
+        "MAX_LAT": 70.0,
+        "MIN_LON": 60.0,
+        "MAX_LON": 220.0        
     },
     "IPATH": {
         "TRACKS_RAW": "./input/tracks",

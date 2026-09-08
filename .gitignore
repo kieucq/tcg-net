@@ -4,8 +4,6 @@ models/finetune/ResNet_*
 models/pre-trained/dynamic/ResNet_*
 tasks.txt
 preprocess/backup
-preprocess/domain_extract/libctg_HurricaneTrackDataset
-preprocess/domain_extract/libctg_WeatherDataset
 preprocess/domain_extract/__pycache__
 preprocess/domain_extract/config
 preprocess/domain_extract/slurm*
