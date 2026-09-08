@@ -5,8 +5,10 @@ models/pre-trained/dynamic/ResNet_*
 tasks.txt
 preprocess/backup
 preprocess/domain_extract/__pycache__
-preprocess/domain_extract/config
 preprocess/domain_extract/slurm*
+preprocess/domain_extract/libctg_WeatherDataset/__pycache__
+preprocess/domain_extract/libctg_HurricaneTrackDataset/__pycache__
+preprocess/domain_extract/configs/__pycache__
 preprocess/era5/__pycache__
 models/resnet18/lightning_logs
 models/prediction/lightning_logs
