@@ -85,13 +85,13 @@ def PastDomain(WD: WeatherDataset, HT: HurricaneTrack, htdf:pd.DataFrame, wd_fil
             continue
         target_path = target_path[0]
         w_ds = WD.LoadFromDisk(target_path)
-        lat_c = FindNearest(w_ds["latitude"].values, lat_c)
-        lon_c = FindNearest(w_ds["longitude"].values, lon_c)
         s_ds = WD.GetSample(w_ds, id, lat_c, lon_c, date_c, time_c, lat_dim=WD.DIM_LAT, lon_dim=WD.DIM_LON)
-        if not s_ds:
+        if s_ds is None:
             continue
         save_path = os.path.join(positive_path, f"POSITIVE_{id}.nc")
         WD.SaveToDisk(save_path, s_ds)
+        lat_c = findMiddle(s_ds["latitude"].values.tolist())
+        lon_c = findMiddle(s_ds["longitude"].values.tolist())
         current_datetime = htdf["ISO_TIME"][i]
         for j in range(nstep):
             selected_datetime = current_datetime - datetime.timedelta(hours=(WD.STEP_TIME_HOURS*(j+1)))
@@ -104,7 +104,7 @@ def PastDomain(WD: WeatherDataset, HT: HurricaneTrack, htdf:pd.DataFrame, wd_fil
             target_path = target_path[0]
             n_w_ds = WD.LoadFromDisk(target_path)
             n_s_ds = WD.GetSample(n_w_ds, id, lat_c, lon_c, date_c, time_c, lat_dim=WD.DIM_LAT, lon_dim=WD.DIM_LON, negative_type=f"PAST_T-{j+1}")
-            if not n_s_ds:
+            if n_s_ds is None:
                 continue
             datetime.datetime.strftime
             save_path = os.path.join(negative_path, f"NEGATIVE_{id}_{j+1}_{selected_datetime.strftime('%Y%m%d_%H%M')}.nc")
