@@ -38,13 +38,11 @@ def DynamicDomain(WD: WeatherDataset, HT: HurricaneTrack, htdf:pd.DataFrame, wd_
         w_ds = WD.LoadFromDisk(target_path[0])
 
         # --- Positive sample (only at t=0) ---
-        lat_nearest = FindNearest(w_ds["latitude"].values, lat_c)
-        lon_nearest = FindNearest(w_ds["longitude"].values, lon_c)
         s_ds = WD.GetSample(
-            w_ds, id, lat_nearest, lon_nearest, date_c, time_c,
+            w_ds, id, lat_c, lon_c, date_c, time_c,
             lat_dim=WD.DIM_LAT, lon_dim=WD.DIM_LON
         )
-        if not s_ds:
+        if s_ds is None:
             continue
 
         save_path = os.path.join(positive_path, f"POSITIVE_{id}.nc")
@@ -104,7 +102,7 @@ def DynamicDomain(WD: WeatherDataset, HT: HurricaneTrack, htdf:pd.DataFrame, wd_
                     lat_dim=WD.DIM_LAT, lon_dim=WD.DIM_LON,
                     negative_type=f"DYNAMIC_{domain}_{t}"
                 )
-                if n_s_ds:
+                if n_s_ds is not None:
                     save_path = os.path.join(negative_path, f"NEGATIVE_{id}_{domain}_{t}.nc")
                     WD.SaveToDisk(save_path, n_s_ds)
     return
