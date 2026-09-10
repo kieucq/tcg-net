@@ -72,11 +72,12 @@ def main(args):
     #===================
     # Prepare data phase
     #===================
+    data_dir = Path(inp_dir)
     ds = LData(DatasetClass=Merra2_full,
-            train_path = os.path.join(inp_dir, 'train.csv'),
-            val_path = os.path.join(inp_dir, 'val.csv'),
-            test_path = os.path.join(inp_dir, 'test.csv'),
-            predict_path = CONFIG.DYNAMIC_MODEL_DATASET.PREDICT_PATH,
+            train_path = data_dir / 'train.csv',
+            val_path = data_dir / 'val.csv',
+            test_path = data_dir / 'test.csv',
+            predict_path = data_dir / 'test.csv',
             ratio = ratio,
             batch_size = batch_size,
             num_workers = num_workers,)

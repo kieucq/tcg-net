@@ -51,6 +51,11 @@ python split_data_training.py \
     --test_end_year ${test_end_year} \
     --rus_ratio ${ratio}
 
+# re-generate the statistics from input data if needed
+#python generate_data_train_statistics.py \
+#    --inp-dir "${src}/output/csv/DynamicRemain_rus${ratio}/Step_${step}" \
+#    --overwrite 
+
 # runing train job
 python ./train_job.py \
     --project ${project} \

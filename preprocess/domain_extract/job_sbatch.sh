@@ -19,5 +19,6 @@ echo "Generating extend domain for ${data_type}"
 
 conda deactivate
 module load python/gpu/3.12.5
+
 python Extract_DynamicDomain.py --dataset ${data_type}
-python Extract_PastDomain.py --dataset ${data_type} 
+python Extract_PastDomain.py --dataset ${data_type}
