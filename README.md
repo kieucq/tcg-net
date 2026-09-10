@@ -350,10 +350,10 @@ The output directory receives a version suffix such as `_v0`. Repeat with steps 
 Note that whole procedure of generating CSV (section 6.3) and training (section 6.5) can be submitted all at once by using the script `model/resnet18/job_sbatch.sh`. For this, one has to change a few data paths and slurm directives in the code, and the combined CSV/split/train wrapper can be submitted with:
 
 ```bash
-sbatch models/resnet18/job_sbatch.sh 2
+sbatch models/resnet18/job_sbatch.sh $leadTime
 ```
 
-Expected checkpoints are stored under:
+where `leadTime = 2,4,.. 18` can be understood either as the forecast lead time or the window steps back into the past used to augment the TCG dataset. If this training step finishes, one expects some checkpoints stored under:
 
 ```text
 models/pre-trained/dynamic/ResNet_r30_w6/Step_<N>_v0/checkpoints/

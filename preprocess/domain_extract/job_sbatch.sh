@@ -8,7 +8,7 @@
 #SBATCH --mem-per-gpu=128G
 ##SBATCH --cpus-per-gpu=64
 set -x
-cd /N/slate/ckieu/tcg-net/preprocess/domain_extract
+src="/N/slate/ckieu/tcg-net/preprocess/domain_extract"
 data_type=$1
 cd "${src}/preprocess/${data_type}"
 if [ "${data_type}" = "" ]; then

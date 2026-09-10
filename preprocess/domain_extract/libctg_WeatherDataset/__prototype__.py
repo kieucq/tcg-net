@@ -131,28 +131,67 @@ class WeatherDataset:
     
     # GET SAMPLE
 
-    def GetSample(self, wds: xr.Dataset, id: str, lat_c: float, lon_c: float, date_c: datetime.date, time_c: datetime.time, lat_dim: int = 0, lon_dim: int = 0, negative_type: str = None):
-        lat_dim = lat_dim if lat_dim else self.DIM_LAT
-        lon_dim = lon_dim if lon_dim else self.DIM_LON
+    def GetSample(self, wds: xr.Dataset, id: str, lat_c: float, lon_c: float, date_c: datetime.date, time_c: datetime.time, lat_dim: int = 0, lon_dim: int = 0, negative_type: str = None, min_boundary_points: int = 17):
+        lat_dim = int(lat_dim if lat_dim else self.DIM_LAT)
+        lon_dim = int(lon_dim if lon_dim else self.DIM_LON)
+        lat_grid = np.asarray(wds["latitude"].values)
+        lon_grid = np.asarray(wds["longitude"].values)
+
+        # Reject centers outside the source domain before selecting the nearest
+        # grid point. This prevents out-of-domain storms from being moved onto
+        # a domain boundary.
+        if not (lat_grid.min() <= lat_c <= lat_grid.max()):
+            print(
+                f"GetSample: skipping {id}; latitude center {lat_c} is outside "
+                f"[{lat_grid.min()}, {lat_grid.max()}]"
+            )
+            return None
+        if not (lon_grid.min() <= lon_c <= lon_grid.max()):
+            print(
+                f"GetSample: skipping {id}; longitude center {lon_c} is outside "
+                f"[{lon_grid.min()}, {lon_grid.max()}]"
+            )
+            return None
+
+        lat_idx = int(np.abs(lat_grid - lat_c).argmin())
+        lon_idx = int(np.abs(lon_grid - lon_c).argmin())
+        lat_boundary_points = min(lat_idx, len(lat_grid) - lat_idx - 1)
+        lon_boundary_points = min(lon_idx, len(lon_grid) - lon_idx - 1)
+
+        # A valid center must have the requested safety margin on both sides
+        # of both spatial axes.
+        if lat_boundary_points < min_boundary_points or lon_boundary_points < min_boundary_points:
+            print(
+                f"GetSample: skipping {id}; center ({lat_c}, {lon_c}) has only "
+                f"{lat_boundary_points} latitude and {lon_boundary_points} longitude "
+                f"points to the nearest boundary; requires {min_boundary_points}"
+            )
+            return None
+
         # LAT CALC
         lat_c_o = lat_c
-        lat_grid = np.asarray(wds["latitude"].values)
         lat_step = self.STEP_LAT
-        lat_c = FindNearest(array=lat_grid, value=lat_c)
+        lat_c = lat_grid[lat_idx]
         # LON CALC
         lon_c_o = lon_c
-        lon_grid = np.asarray(wds["longitude"].values)
         lon_step = self.STEP_LON
-        lon_c = FindNearest(array=lon_grid, value=lon_c)
+        lon_c = lon_grid[lon_idx]
         dt_r = [(date_c, time_c)]
-        lat_dim = int(lat_dim/2)
-        lon_dim = int(lon_dim/2)
-        lat_r = (lat_c-lat_dim*lat_step, lat_c+lat_dim*lat_step)
-        lon_r = (lon_c-lon_dim*lon_step, lon_c+lon_dim*lon_step)
+        lat_half_dim = int(lat_dim/2)
+        lon_half_dim = int(lon_dim/2)
+        lat_r = (lat_c-lat_half_dim*lat_step, lat_c+lat_half_dim*lat_step)
+        lon_r = (lon_c-lon_half_dim*lon_step, lon_c+lon_half_dim*lon_step)
         print(f"GetSample: lat_c={lat_c}, lon_c={lon_c}, lat_r={lat_r}, lon_r={lon_r}, date_c={date_c}, time_c={time_c}, lat_dim={lat_dim}, lon_dim={lon_dim}")
         # Extract dataset
         s_wds = self.SelectData(wds, lat_r, lon_r, dt_r)
-        if not s_wds:
+        if s_wds is None:
+            return None
+        if s_wds.sizes["latitude"] != lat_dim or s_wds.sizes["longitude"] != lon_dim:
+            print(
+                f"GetSample: skipping {id}; extracted grid is "
+                f"{s_wds.sizes['latitude']}x{s_wds.sizes['longitude']}, "
+                f"expected {lat_dim}x{lon_dim}"
+            )
             return None
         # Add metadata to dataset
         s_wds.attrs["SID"] = id
