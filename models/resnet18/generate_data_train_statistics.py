@@ -106,7 +106,7 @@ def channel_specs(model_config: dict) -> list[tuple[str, int]]:
     )
     specs.extend(
         (variable, level)
-        for variable in model_config["ADD_VAR"]
+        for variable in model_config.get("ADD_VAR", [])
         for level in pressure_levels
     )
     if len(specs) != len(set(specs)):
@@ -180,7 +180,7 @@ def model_channels(
         for index, level in enumerate(pressure_levels):
             yield (variable, level), values[index]
 
-    derived_variables = list(model_config["ADD_VAR"])
+    derived_variables = list(model_config.get("ADD_VAR", []))
     unsupported = set(derived_variables) - {"VOR", "DIV"}
     if unsupported:
         raise ValueError(f"Unsupported derived variables: {sorted(unsupported)}")

@@ -9,12 +9,70 @@ import numpy as np
 import pandas as pd
 from config_loader import CONFIG
 
+MODEL_TO_ERA5_VARIABLE = {
+    "PHIS": "BLH",
+    "PS": "SP",
+    "SLP": "MSL",
+    "H": "Z",
+    "OMEGA": "W",
+    "QL": "QC",
+    "QV": "Q",
+    "RH": "R",
+    "SST": "SSTK"
+}
+
+
+def configured_model_variables():
+    model_config = CONFIG.DYNAMIC_MODEL_DATASET
+    variables = list(model_config.SINGLE_VAR) + list(model_config.PRESS_VAR)
+    if len(variables) != len(set(variables)):
+        raise ValueError(
+            "DYNAMIC_MODEL_DATASET.SINGLE_VAR and PRESS_VAR contain duplicate variables"
+        )
+    return variables
+
+
+def select_configured_variables(dataset):
+    """Select and standardize exactly the model variables requested in config.json."""
+    configured_variables = configured_model_variables()
+    source_variables = []
+    rename_variables = {}
+    missing_variables = []
+
+    for model_name in configured_variables:
+        raw_name = MODEL_TO_ERA5_VARIABLE.get(model_name, model_name)
+        if model_name in dataset.data_vars:
+            source_name = model_name
+        elif raw_name in dataset.data_vars:
+            source_name = raw_name
+        else:
+            missing_variables.append(f"{model_name} (expected ERA5 variable {raw_name})")
+            continue
+
+        source_variables.append(source_name)
+        if source_name != model_name:
+            rename_variables[source_name] = model_name
+
+    if missing_variables:
+        raise ValueError(
+            "ERA5 input is missing variables required by config.json: "
+            + ", ".join(missing_variables)
+        )
+
+    selected = dataset[source_variables]
+    if rename_variables:
+        selected = selected.rename(rename_variables)
+    return selected[configured_variables]
+
+
 def RoundBase(x, prec=0, base=1):
     return round(base * round(float(x)/base),prec)
 
 def preprocess_era5(file, output_path):
     ds = xr.open_dataset(file, engine="netcdf4")
-    
+
+    if "level" not in ds.dims:
+        raise ValueError(f"ERA5 pressure dimension 'level' is missing from {file}")
     ds_filtered = ds.isel(level=slice(None, None, -1))
     ds_filtered['level'].attrs.update(
         {
@@ -22,17 +80,8 @@ def preprocess_era5(file, output_path):
             "positive":"up"
         }
     )
-    ds_filtered = ds_filtered.rename({
-            "level": "isobaricInhPa",
-            "BLH": "PHIS",
-            "SP": "PS",
-            "MSL": "SLP",
-            "Z": "H",
-            "W": "OMEGA",
-            "QC": "QL",
-            "Q": "QV",
-            "R": "RH",
-        })
+    ds_filtered = select_configured_variables(ds_filtered)
+    ds_filtered = ds_filtered.rename({"level": "isobaricInhPa"})
 
     lat_vals = np.arange(CONFIG.PRE_DOMAIN.MIN_LAT, CONFIG.PRE_DOMAIN.MAX_LAT + 0.1, 0.5)  # from -50 to 70, step 0.5
     lon_vals = np.arange(CONFIG.PRE_DOMAIN.MIN_LON, CONFIG.PRE_DOMAIN.MAX_LON + 0.1, 0.5)  # from 60 to 220, step 0.5
@@ -95,6 +144,12 @@ def MultiProcessing(Worker, args:tuple, n_worker:int):
         ps.append(p)
     for p in ps:
         p.join()
+    failed_workers = [p for p in ps if p.exitcode != 0]
+    if failed_workers:
+        failures = ", ".join(
+            f"pid={p.pid}, exitcode={p.exitcode}" for p in failed_workers
+        )
+        raise RuntimeError(f"ERA5 preprocessing workers failed: {failures}")
 
 def Worker(queue: mp.Queue, output_path: str):
     while not queue.empty():
@@ -123,13 +178,32 @@ def PreprocessEra5Main():
     input_path = CONFIG.IPATH.ERA5_RAW
     output_path = CONFIG.OPATH.ERA5_PREP
 
-    CleanDir(output_path)
     files = RecurseListDir(input_path, ["*.nc"])
+    if not files:
+        raise FileNotFoundError(f"No ERA5 NetCDF files were found under {input_path}")
+
+    # Fail before deleting prior output or starting workers when the raw-data
+    # variables do not agree with config.json.
+    with xr.open_dataset(files[0], engine="netcdf4") as sample:
+        if "level" not in sample.dims:
+            raise ValueError(f"ERA5 pressure dimension 'level' is missing from {files[0]}")
+        select_configured_variables(sample)
+
+    CleanDir(output_path)
     queue = mp.Queue()
     for f in files:
         queue.put(f)  
-    mp.Process(target=ProgressBar, args=(queue, len(files), "Preprocess Era5")).start()
-    MultiProcessing(Worker, (queue, output_path), 32)
+    progress_process = mp.Process(
+        target=ProgressBar,
+        args=(queue, len(files), "Preprocess Era5"),
+    )
+    progress_process.start()
+    try:
+        MultiProcessing(Worker, (queue, output_path), 32)
+    finally:
+        if progress_process.is_alive():
+            progress_process.terminate()
+        progress_process.join()
     print("Preprocess Era5: Done")
 
 if __name__ == "__main__":

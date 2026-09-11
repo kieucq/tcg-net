@@ -11,7 +11,7 @@ from lightning.pytorch import Trainer
 from lightning.pytorch.loggers import WandbLogger
 from Progress.L_progress import CrossEntropyLoss_base
 from Progress.L_callback import save_checkpoint_callback
-from Dataset.Merra2_dataset import LData, Merra2_full
+from Dataset.Merra2_dataset import INP_CHANNELS, LData, Merra2_full
 from Model.PointOut.ResNet_classification import Resnet
 from Utils.Seed import set_all_seeds
 from Utils.Metrics import *
@@ -19,12 +19,12 @@ from config_loader import CONFIG
 
 SINGLE_VAR = CONFIG.DYNAMIC_MODEL_DATASET.SINGLE_VAR
 PRESS_VAR = CONFIG.DYNAMIC_MODEL_DATASET.PRESS_VAR
-ADD_VAR = CONFIG.DYNAMIC_MODEL_DATASET.ADD_VAR
+ADD_VAR = CONFIG.DYNAMIC_MODEL_DATASET.get('ADD_VAR', [])
 PRESS_LEVEL = CONFIG.DYNAMIC_MODEL_DATASET.PRESS_LEVEL
 LEVEL = len(PRESS_LEVEL)
 
 # number of channels after concat
-inp_channels = len(SINGLE_VAR) + LEVEL * (len(PRESS_VAR)+len(ADD_VAR))
+inp_channels = INP_CHANNELS
 print(f"Input channel for this model is {inp_channels}")
 print(f"3D variables to be used {PRESS_VAR}")
 print(f"Surface variables to be used {SINGLE_VAR}")

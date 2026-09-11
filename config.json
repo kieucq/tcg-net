@@ -84,9 +84,9 @@
         "TCG_CYCLE": "2025112506"
     },    
     "DYNAMIC_MODEL_DATASET": {
-        "SINGLE_VAR": ["PHIS", "SLP"],
-        "PRESS_VAR": ["H", "OMEGA", "QI", "QL", "QV", "RH", "T", "U", "V"],
-        "ADD_VAR": ["VOR", "DIV"],
+        "SINGLE_VAR": ["PS","SST"],
+        "PRESS_VAR": ["H", "OMEGA", "RH", "T", "U", "V"],
+        "ADD_VAR": [],
         "PRESS_LEVEL": [1000, 975, 950, 925, 900, 875, 850, 825,
                800, 775, 750, 725, 700, 650, 600, 550,
                500, 450, 400, 350, 300, 250, 200, 150, 100],

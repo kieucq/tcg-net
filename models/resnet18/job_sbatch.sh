@@ -25,10 +25,10 @@ ratio=30
 weight=15
 project="ResNet"
 data_source="ERA5"
-train_start_year=1970
-train_end_year=1971
-test_start_year=1971
-test_end_year=1971
+train_start_year=1980
+train_end_year=1981
+test_start_year=1981
+test_end_year=1981
 seed=45
 batch_size=512
 
@@ -52,9 +52,9 @@ python split_data_training.py \
     --rus_ratio ${ratio}
 
 # re-generate the statistics from input data if needed
-#python generate_data_train_statistics.py \
-#    --inp-dir "${src}/output/csv/DynamicRemain_rus${ratio}/Step_${step}" \
-#    --overwrite 
+python generate_data_train_statistics.py \
+    --inp-dir "${src}/output/csv/DynamicRemain_rus${ratio}/Step_${step}" \
+    --overwrite 
 
 # runing train job
 python ./train_job.py \

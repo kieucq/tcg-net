@@ -14,7 +14,7 @@ from Utils.New_features import *
 
 SINGLE_VAR = CONFIG.DYNAMIC_MODEL_DATASET.SINGLE_VAR
 PRESS_VAR = CONFIG.DYNAMIC_MODEL_DATASET.PRESS_VAR
-ADD_VAR = CONFIG.DYNAMIC_MODEL_DATASET.ADD_VAR
+ADD_VAR = CONFIG.DYNAMIC_MODEL_DATASET.get('ADD_VAR', [])
 PRESS_LEVEL = CONFIG.DYNAMIC_MODEL_DATASET.PRESS_LEVEL
 #LEVEL = CONFIG.DYNAMIC_MODEL_DATASET.LEVEL
 LEVEL = len(PRESS_LEVEL)
@@ -26,6 +26,10 @@ LIST_VAR = [var + '0' for var in SINGLE_VAR]
 LIST_VAR.extend([var + str(level) for var in PRESS_VAR for level in PRESS_LEVEL])
 LIST_VAR.extend([var + str(level) for var in ADD_VAR for level in PRESS_LEVEL])
 print(len(LIST_VAR))
+
+unsupported_add_var = set(ADD_VAR) - {'VOR', 'DIV'}
+if unsupported_add_var:
+    raise ValueError(f"Unsupported ADD_VAR values: {sorted(unsupported_add_var)}")
 #===============================
 # Description: 
 #   - Fully loaded dataset before train progress
@@ -71,20 +75,27 @@ class Merra2_full(Dataset):
 
             input.extend(arr)
             
-        U = ds.variables['U'].data.squeeze()[: LEVEL]
-        V = ds.variables['V'].data.squeeze()[: LEVEL]
-        lon = ds.coords['longitude'].data
-        lat = ds.coords['latitude'].data[:: -1]
-        lat_grid, lon_grid = meshgrid(lat, lon, LEVEL)
-        VOR = vorticity(U, V, lat_grid, lon_grid)
-        #print('VOR', VOR.shape)
-        input.extend(VOR)
-        DIV = divergence(U, V, lat_grid, lon_grid)
-        input.extend(DIV)
-        #print('DIV', DIV.shape)
+        if ADD_VAR:
+            U = ds.variables['U'].data.squeeze()[: LEVEL]
+            V = ds.variables['V'].data.squeeze()[: LEVEL]
+            lon = ds.coords['longitude'].data
+            lat = ds.coords['latitude'].data[:: -1]
+            lat_grid, lon_grid = meshgrid(lat, lon, LEVEL)
+            derived_data = {}
+            if 'VOR' in ADD_VAR:
+                derived_data['VOR'] = vorticity(U, V, lat_grid, lon_grid)
+            if 'DIV' in ADD_VAR:
+                derived_data['DIV'] = divergence(U, V, lat_grid, lon_grid)
+            for var in ADD_VAR:
+                input.extend(derived_data[var])
         
         ds.close()
         input = np.array(input)
+        if input.shape[0] != INP_CHANNELS:
+            raise ValueError(
+                f"Dataset produced {input.shape[0]} channels; expected {INP_CHANNELS} "
+                "from SINGLE_VAR, PRESS_VAR, ADD_VAR, and PRESS_LEVEL in config.json"
+            )
         #print(input.shape, self.mean.shape, self.std.shape)
         res = (input - self.mean) / self.std
         res[np.isnan(res)] = 0
