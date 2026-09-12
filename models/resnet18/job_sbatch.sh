@@ -26,9 +26,9 @@ weight=15
 project="ResNet"
 data_source="ERA5"
 train_start_year=1980
-train_end_year=1981
-test_start_year=1981
-test_end_year=1981
+train_end_year=2008
+test_start_year=2009
+test_end_year=2009
 seed=45
 batch_size=512
 
