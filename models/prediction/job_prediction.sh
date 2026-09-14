@@ -41,13 +41,14 @@ module load python/gpu/3.10.10
 
 # set up parameters
 ratio=30
-weight=6
+weight=15
 pretrain_model="ResNet"
 finetune_model="ResNet"
 seed=45
 #exp="_4060"
 exp=""
-model="${src}/models/finetune/${finetune_model}_r${ratio}_w${weight}"
+#model="${src}/models/finetune/${finetune_model}_r${ratio}_w${weight}"
+model="${src}/models/pre-trained/dynamic/${finetune_model}_r${ratio}_w${weight}"
 if [ -d $model ]; then
     echo "Model ${model} exist... continue"
 else

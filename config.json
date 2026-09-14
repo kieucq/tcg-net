@@ -44,8 +44,8 @@
         "AREA": {
             "MIN_LAT": 0.0,
             "MAX_LAT": 30.0,
-            "MIN_LON": 100.0,
-            "MAX_LON": 150.0
+            "MIN_LON": 260.0,
+            "MAX_LON": 350.0
         },
         "CHILD_AREA": {
             "LAT_DIM": 33.0,
@@ -64,13 +64,13 @@
             "AGG_STEPS": 1,
             "TIME_STEP_HOURS": 6
         },
-        "INPUT_PATH": "./output/GFS_extend",
-        "OUTPUT_PATH": "./output/GFS_slide"
+        "INPUT_PATH": "./output/ERA5_extend",
+        "OUTPUT_PATH": "./output/ERA5_slide"
     },
 
     "DYNAMIC_DOMAIN": {
-        "SLIDE_DIR": "../../output/GFS_slide/",
-        "MODEL_TEMP": "/N/slate/ckieu/tcg-net//models/finetune/ResNet_r30_w6/Step_{0}_v0/checkpoints/last.ckpt",
+        "SLIDE_DIR": "../../output/ERA5_slide/",
+        "MODEL_TEMP": "/N/slate/ckieu/tcg-net/models/pre-trained/ResNet_r30_w15/Step_{0}_v0/checkpoints/last.ckpt",
         "PREDICTION_CSV": "../../output/GFS_slide/dynamic_prediction.csv"
     },
 
@@ -78,7 +78,7 @@
         "PLOT_IBTRACS": true,
         "IBTRACS_FOLDER": "./output/tracks_preprocess",
         "PLOT_DURATION": false,
-        "YEAR_DURATION": "1960-1970",
+        "YEAR_DURATION": "2008-2009",
         "PREDICT_CSV_FILE": "./output/GFS_slide/dynamic_prediction.csv",
         "OUTPUT_FREQUENCY": "./output/TCG_frequency_maps",
         "TCG_CYCLE": "2025112506"

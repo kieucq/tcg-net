@@ -394,7 +394,9 @@ models/finetune/ResNet_r30_w6/Step_<N>_v0/checkpoints/
 
 ### 6.7. Reconstruct TCG fields from climate or reanalysis data
 
-For an existing preprocessed dataset and checkpoint set, configure:
+The final step after trainning or finetuning a model is to apply the trained model for inference. Before we can do the inference step, users
+need to run one step to split the whole domain into small sub-domain. For an existing preprocessed dataset and checkpoint set, configure the
+following inside the config.json.
 
 - `SLICING_WINDOW.INPUT_PATH` and `OUTPUT_PATH`;
 - `SLICING_WINDOW.AREA`, `CHILD_AREA`, and `NUM_STEP` if the grid differs;
@@ -412,8 +414,15 @@ python main.py
 cd ../..
 ```
 
-Allowed map-slicing dataset identifiers are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. `map_slide.py` creates the spatial windows and `data.csv`; `main.py` runs `dynamic.py`, loads step-specific checkpoints, and writes the combined probability CSV.
+Allowed map-slicing dataset identifiers are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. `map_slide.py` creates the spatial windows and `data.csv`; 
+`main.py` runs `dynamic.py`, loads step-specific checkpoints, and writes the combined probability CSV. The whole step above can also be run by 
+using a single job script `job_prediction.sh` under the models/prediction dir as follows
 
+```bash
+sbatch job_prediction.sh era5
+```
+
+For this script, one needs to modify the source path (pre-trained or finetune), model type,... 
 To resume only the prediction phase after sliding windows already exist:
 
 ```bash
