@@ -70,8 +70,8 @@
 
     "DYNAMIC_DOMAIN": {
         "SLIDE_DIR": "../../output/ERA5_slide/",
-        "MODEL_TEMP": "/N/slate/ckieu/tcg-net/models/pre-trained/ResNet_r30_w15/Step_{0}_v0/checkpoints/last.ckpt",
-        "PREDICTION_CSV": "../../output/GFS_slide/dynamic_prediction.csv"
+        "MODEL_TEMP": "/N/slate/ckieu/tcg-net//models/pre-trained/dynamic/ResNet_r30_w15/Step_{0}_v0/checkpoints/last.ckpt",
+        "PREDICTION_CSV": "../../output/ERA5_slide/dynamic_prediction.csv"
     },
 
     "TCG_FREQUENCY": {
