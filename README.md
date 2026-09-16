@@ -269,8 +269,11 @@ On Slurm, MERRA-2 and ERA5 wrappers should be submitted after adapting their sit
 ```bash
 sbatch preprocess/era5/job_sbatch.sh era5
 ```
+If properly run, all output from this step will be saved under `ERA5_extend`.
 
-### 6.3. Construct supervised domains for training
+### 6.3. Training model procedures
+
+#### 6.3.1 Construct supervised domains for training
 
 This step is required for pretraining or fine-tuning, but not when applying an existing model to already preprocessed operational/climate data.
 
@@ -296,7 +299,7 @@ Valid extraction choices are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. Replac
 
 Both extraction commands recreate the dataset-specific positive directory; therefore, the second run replaces the positive files written by the first (this sloppy design needs to be fixed). These files represent the same time-zero positive cases when the configuration and input coverage are unchanged.
 
-### 6.4. Build CSV splits
+#### 6.3.2 Build CSV splits
 
 Once you finish the preprocess step. The next one is to run the training. This starts with a process called "CSV generator". Basically, the CSV generator expects generic `output/POSITIVE`, `output/PastDomain`, and `output/DynamicDomain` paths from the preprocess steps. Point these names to the dataset to be trained. For MERRA-2, for example:
 
@@ -327,7 +330,7 @@ The generator writes `output/csv/all.csv`. The splitter creates `train.csv`, `va
 
 The paper’s main protocol uses 1980–2016 for training/validation and 2017–2023 for testing. Some supplied job wrappers were later customized to different year ranges; inspect and set the ranges appropriate for the experiment being reproduced.
 
-### 6.5. Pretrain ResNet-18
+### 6.3.3 Pretrain ResNet-18
 
 To train one step manually, one needs to modify the few paths including `STATISTIC_PATH`, `TRAIN_PATH`, `VAL_PATH`, `TEST_PATH`, and `PREDICT_PATH` at the end of the config.json, and do the following: 
 
@@ -361,7 +364,7 @@ If this training step finishes, one expects some checkpoints stored under:
 models/pre-trained/dynamic/ResNet_r30_w6/Step_<leadTime>_v0/checkpoints/
 ```
 
-### 6.6. Fine-tune on another dataset
+### 6.3.4 Fine-tune on another dataset
 
 Prepare and link the target dataset’s positive/Past/Dynamic outputs, regenerate the CSV splits, and supply the matching pretrained checkpoint:
 
@@ -392,11 +395,16 @@ Fine-tuned checkpoints are expected under:
 models/finetune/ResNet_r30_w6/Step_<N>_v0/checkpoints/
 ```
 
-### 6.7. Reconstruct TCG fields from climate or reanalysis data
+### 6.4 Inference modes
+
+#### 6.4.1 Reconstruct TCG fields from climate or reanalysis data
 
 The final step after trainning or finetuning a model is to apply the trained model for inference. Before we can do the inference step, users
-need to run one step to split the whole domain into small sub-domain. For an existing preprocessed dataset and checkpoint set, configure the
-following inside the config.json.
+need to run steps 6.1-6.2 again to prepare a new test data for inference. Assuming using ERA5 data, then one needs to have a folder `ERA5_extend` 
+under the `output` directory that contains all test data for inference. 
+
+With the test data ready, one needs to split the whole domain into small sub-domains (windows). For the preprocessed test dataset and checkpoint set, 
+configure the following inside the config.json.
 
 - `SLICING_WINDOW.INPUT_PATH` and `OUTPUT_PATH`;
 - `SLICING_WINDOW.AREA`, `CHILD_AREA`, and `NUM_STEP` if the grid differs;
@@ -429,7 +437,7 @@ To resume only the prediction phase after sliding windows already exist:
 sbatch models/prediction/job_dynamics.sh
 ```
 
-### 6.8. Run the end-to-end GFS operational workflow
+#### 6.4.2 Run the end-to-end GFS operational workflow
 
 Place one cycle under either:
 
@@ -456,7 +464,7 @@ The wrapper performs GFS preprocessing, sliding-window inference, and map genera
 
 Operational scripts update several root `config.json` values in place with `sed`, including GFS input, slicing paths, checkpoint template, prediction CSV, and plotting cycle. Commit or copy the desired configuration before running if those edits must be preserved. In detection mode, `rename_file_datetime.sh` may also rename source GFS files to valid-time filenames.
 
-### 6.9. Postprocess predictions
+### 6.5. Postprocess predictions
 
 Set `TCG_FREQUENCY.PREDICT_CSV_FILE`, `TCG_CYCLE`, and related plotting options in `config.json`, then create maps with:
 
