@@ -1,6 +1,6 @@
 # Deep-learning reconstruction and prediction of tropical cyclogenesis 
 
-This TCG-Net repo is a research pipeline for detecting favorable environments for tropical cyclone genesis (TCG) directly from gridded reanalysis, climate-model, and forecast data. The repository covers data standardization, construction of supervised positive/negative samples, training and fine-tuning of an adapted ResNet-18 classifier, sliding-window inference, and visualization of TCG probability maps and climatological frequency. The scientific method and model design are described in Le et al. (2026), Kieu et al. (2026).
+This repository is a research pipeline for reconstructing tropical cyclone genesis (TCG) climatology or short-term forecast of TCG directly from gridded reanalysis, climate model outputs, and forecast data. The repository covers data standardization, construction of supervised positive/negative samples, training and fine-tuning of an adapted ResNet-18 classifier, sliding-window inference, and visualization of TCG probability maps and climatological frequency. The scientific method and model design are described in Le et al. (2026), Kieu et al. (2026).
 
 ## Contents
 
@@ -233,6 +233,8 @@ Relative paths are resolved from the process working directory. The supplied wra
 > **Destructive-path warning:** preprocessors call `CleanDir` on their configured output directory before writing new files. Confirm every `OPATH.*_PREP` value before starting a run.
 
 ## 6. How to run
+
+Before running, reference to Section 5 for all the setting conventions in the `config.json`, which will be referred in this section.
 
 ### 6.1. Prepare the input layout
 
