@@ -83,7 +83,7 @@ tcg-net/
 │   │   └── Utils/                   # Metrics, derived features, seeds, and evaluation helpers
 │   ├── resnet18/                    # CSV preparation and pretraining entry points
 │   ├── finetune/                    # Fine-tuning entry points and local checkpoint outputs
-│   ├── prediction/                  # Sliding-window generation and multi-step inference
+│   ├── inference/                   # Sliding-window generation and multi-step inference
 │   └── pre-trained/                 # Local pretrained checkpoints; ignored by Git
 ├── operation/
 │   └── job_main.sh                  # End-to-end operational orchestration
