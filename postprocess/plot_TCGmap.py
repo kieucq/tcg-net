@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 from config_loader import CONFIG
 
-csv_file = CONFIG.TCG_FREQUENCY.PREDICT_CSV_FILE
-cycle = CONFIG.TCG_FREQUENCY.TCG_CYCLE
+csv_file = CONFIG.POSTPROCESS.PREDICT_CSV_FILE
+cycle = CONFIG.POSTPROCESS.TCG_CYCLE
 os.makedirs(f"./output/postprocess/{cycle}", exist_ok=True)
 
 def plot_dynamic():

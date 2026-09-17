@@ -64,7 +64,7 @@
             "AGG_STEPS": 1,
             "TIME_STEP_HOURS": 6
         },
-        "INPUT_PATH": "./output/ERA5_extend",
+        "INPUT_PATH": "./output/ERA5_extend_2009",
         "OUTPUT_PATH": "./output/ERA5_slide"
     },
 
@@ -74,12 +74,12 @@
         "PREDICTION_CSV": "../../output/ERA5_slide/dynamic_prediction.csv"
     },
 
-    "TCG_FREQUENCY": {
+    "POSTPROCESS": {
         "PLOT_IBTRACS": true,
         "IBTRACS_FOLDER": "./output/tracks_preprocess",
         "PLOT_DURATION": false,
         "YEAR_DURATION": "2008-2009",
-        "PREDICT_CSV_FILE": "./output/GFS_slide/dynamic_prediction.csv",
+        "PREDICT_CSV_FILE": "./output/ERA5_slide/dynamic_prediction.csv",
         "OUTPUT_FREQUENCY": "./output/TCG_frequency_maps",
         "TCG_CYCLE": "2025112506"
     },    

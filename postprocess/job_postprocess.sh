@@ -45,7 +45,7 @@ project="ResNet"
 DATATYPE=${data_type^^}
 sed -i '/PREDICT_CSV_FILE/c\        "PREDICT_CSV_FILE": "./output/'${DATATYPE}'_slide/dynamic_prediction.csv",'  ${src}/config.json
 sed -i '/TCG_CYCLE/c\        "TCG_CYCLE": "'${yyyymmddhh}'"'  ${src}/config.json
-python main.py
+python main_TCGmap.py
 
 # plot the seasonality of the TCG frequency
 #python plot_TCGfrequency_monthly.py
