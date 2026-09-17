@@ -212,21 +212,21 @@ output_dir=/N/scratch/ckieu/tcg-net/output
 
 These values are installation-specific. Manual Python commands can be used without Slurm, provided that the paths in `config.json` and the working directory are correct.
 
-## 5. Configuration
+## 5. Configuration settings
 
 `config.json` is the central runtime configuration. Symlinks named `config.json` in workflow subdirectories point back to this file, so changing the root file affects all stages.
 
 | Section/key | Purpose |
 | --- | --- |
 | `PRE_DOMAIN` | Geographic crop applied by dataset preprocessors |
-| `IPATH` | Raw atmospheric and track input locations |
-| `OPATH` | Preprocessed, positive, Past Domain, and Dynamic Domain output locations |
-| `STEP_BACK_COUNT` | Number of earlier time steps considered during domain extraction |
+| `IPATH` | Settings for raw atmospheric and TC best-track track input locations. The input for both pretrain and fine-tuning input data is set here |
+| `OPATH` | Settings for the location of the preprocessed, positive, Past Domain, and Dynamic Domain outputs |
+| `STEP_BACK_COUNT` | Number of earlier time steps considered during domain extraction (past window augmentation) during the pre-process |
 | `DOMAIN_EXTRACTION_BATCH_SIZE` | Number of track records assigned to an extraction batch |
-| `SLICING_WINDOW` | Inference area, child-window dimensions/resolution, stride, aggregation, and input/output paths |
-| `DYNAMIC_DOMAIN` | Sliding-window directory, checkpoint path template, and prediction CSV path |
-| `TCG_FREQUENCY` | Prediction/IBTrACS inputs and map or frequency-plot settings |
-| `DYNAMIC_MODEL_DATASET` | Model variables, pressure levels, normalization statistics, and dataset CSV paths |
+| `SLICING_WINDOW` | Settings for inference area, sub-domain size, aggregation, and input/output paths. This is a must before running inference over an entire basin|
+| `DYNAMIC_DOMAIN` | Settings for inference code such as sliding-window input dir, path template to trained model used for inference, and a path to save the inference output in the CSV format |
+| `POSTPROCESS` | Settings for post-processing the output from the inference. It will generate TCG map climatology, or real-time forecast as well as monthly frequency-plot |
+| `DYNAMIC_MODEL_DATASET` | Settings for training data such as model variables, normalization statistics, and the path to output all dataset CSV split |
 
 Relative paths are resolved from the process working directory. The supplied wrappers change into a workflow directory whose `input`, `output`, and `config.json` entries are symlinked to the repository-level locations. When invoking Python manually, the examples below run from the repository root or explicitly change to the expected model directory.
 
@@ -464,7 +464,7 @@ The wrapper performs GFS preprocessing, sliding-window inference, and map genera
 
 Operational scripts update several root `config.json` values in place with `sed`, including GFS input, slicing paths, checkpoint template, prediction CSV, and plotting cycle. Commit or copy the desired configuration before running if those edits must be preserved. In detection mode, `rename_file_datetime.sh` may also rename source GFS files to valid-time filenames.
 
-### 6.5. Postprocess predictions
+### 6.5. Postprocess inference/prediction
 
 Set `TCG_FREQUENCY.PREDICT_CSV_FILE`, `TCG_CYCLE`, and related plotting options in `config.json`, then create maps with:
 
