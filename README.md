@@ -401,7 +401,7 @@ models/finetune/ResNet_r30_w6/Step_<N>_v0/checkpoints/
 
 #### 6.4.1 Reconstruct TCG fields from climate or reanalysis data
 
-The final step after trainning or finetuning a model is to apply the trained model for inference. Before we can do the inference step, users
+The final step after trainning or finetuning a model is to apply the trained modelfor inference. Before we can do the inference step, users
 need to run steps 6.1-6.2 again to prepare a new test data for inference. Assuming using ERA5 data, then one needs to have a folder `ERA5_extend` 
 under the `output` directory that contains all test data for inference. 
 
@@ -418,7 +418,7 @@ configure the following inside the config.json.
 Then run, for example, ERA5 inference:
 
 ```bash
-cd models/prediction
+cd models/inference
 python map_slide.py --dataset era5
 python main.py
 cd ../..
@@ -426,17 +426,17 @@ cd ../..
 
 Allowed map-slicing dataset identifiers are `fnl`, `merra2`, `cmip6`, `era5`, and `gfs`. `map_slide.py` creates the spatial windows and `data.csv`; 
 `main.py` runs `dynamic.py`, loads step-specific checkpoints, and writes the combined probability CSV. The whole step above can also be run by 
-using a single job script `job_prediction.sh` under the models/prediction dir as follows
+using a single job script `job_inference.sh` under the models/inference dir as follows
 
 ```bash
-sbatch job_prediction.sh era5
+sbatch job_inference.sh era5
 ```
 
 For this script, one needs to modify the source path (pre-trained or finetune), model type,... 
-To resume only the prediction phase after sliding windows already exist:
+To resume only the inference phase after sliding windows already exist:
 
 ```bash
-sbatch models/prediction/job_dynamics.sh
+sbatch models/inference/job_dynamics.sh
 ```
 
 #### 6.4.2 Run the end-to-end GFS operational workflow

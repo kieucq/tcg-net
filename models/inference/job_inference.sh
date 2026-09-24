@@ -45,8 +45,8 @@ weight=15
 pretrain_model="ResNet"
 finetune_model="ResNet"
 seed=45
-#exp="_4060"
-exp=""
+exp="_2019"
+#exp=""
 #model="${src}/models/finetune/${finetune_model}_r${ratio}_w${weight}"
 model="${src}/models/pre-trained/dynamic/${finetune_model}_r${ratio}_w${weight}"
 if [ -d $model ]; then
