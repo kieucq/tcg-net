@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH -A r00043
 #SBATCH -J preprocess
-#SBATCH -t 8:00:00
+#SBATCH -t 18:00:00
 #SBATCH -N 1
 #SBATCH -p gpu
 #SBATCH --gpus 1

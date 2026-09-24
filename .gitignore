@@ -23,3 +23,6 @@ models/inference/utilities/__pycache__
 models/inference/slurm*
 postprocess/__pycache__
 userguide.txt
+models/resnet18/__pycache__
+models/lib/Model/PointOut/__pycache__
+
